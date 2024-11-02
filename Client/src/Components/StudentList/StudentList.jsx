@@ -1,73 +1,85 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import StudentForm from "./StudentEditForm/StudentEditForm";
-import StudentService from "../../Service/Student.service";
+import StudentForm from "./StudentEditForm/StudentEditForm"; // Importing student edit form component
+import StudentService from "../../Service/Student.service"; // Importing student service for API calls
+import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons for edit and delete
 
 const StudentList = () => {
-  const [students, setStudents] = useState([]); // State to manage the list of students
-  const [selectedStudent, setSelectedStudent] = useState(null); // State to manage the selected student for editing
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // State to manage the delete confirmation modal
-  const [studentToDelete, setStudentToDelete] = useState(null); // State to manage the student to delete
-  const [loading, setLoading] = useState(true); // State to manage loading status
-  const [error, setError] = useState(null); // State to manage error messages
+  // State variables
+  const [students, setStudents] = useState([]); // List of students
+  const [selectedStudent, setSelectedStudent] = useState(null); // Currently selected student for editing
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal visibility state for delete confirmation
+  const [studentToDelete, setStudentToDelete] = useState(null); // Student selected for deletion
+  const [loading, setLoading] = useState(true); // Loading state for data fetching
+  const [error, setError] = useState(null); // Error state for fetching issues
 
+  // Fetch students on component mount
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await StudentService.getAllStudent();
-        setStudents(response);
+        const response = await StudentService.getAllStudent(); // Fetching all students
+        setStudents(response); // Updating the state with the fetched students
       } catch (err) {
-        setError("Error fetching students. Please try again.");
+        setError("Error fetching students. Please try again."); // Error handling for fetch
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false); // Stop loading state
       }
     };
-    fetchStudents();
+    fetchStudents(); // Call the fetch function
   }, []);
 
+  // Handle student edit selection
   const handleEdit = (student) => {
     setSelectedStudent(student); // Set the selected student for editing
   };
 
+  // Update student list after edit
   const handleUpdate = (updatedStudent) => {
     setStudents((prevStudents) =>
-      prevStudents.map((student) =>
-        student._id === selectedStudent._id
-          ? { ...student, ...updatedStudent }
-          : student
+      prevStudents.map(
+        (student) =>
+          student._id === selectedStudent._id
+            ? { ...student, ...updatedStudent } // Update the student
+            : student // Return the unchanged student
       )
     );
-    setSelectedStudent(null); // Reset the selected student after update
+    setSelectedStudent(null); // Reset selected student
   };
 
+  // Initiate delete process for a student
   const handleDelete = (student) => {
     setStudentToDelete(student); // Set the student to be deleted
-    setIsDeleteModalOpen(true); // Open the delete confirmation modal
+    setIsDeleteModalOpen(true); // Open confirmation modal
   };
 
+  // Confirm deletion of the selected student
   const confirmDelete = async () => {
     if (studentToDelete) {
       try {
-        await StudentService.deleteStudent(studentToDelete._id); // Pass the student ID for deletion
-
+        await StudentService.deleteStudent(studentToDelete._id); // Delete the student by ID
         setStudents(
           students.filter((student) => student._id !== studentToDelete._id)
-        );
-        setIsDeleteModalOpen(false);
-        setStudentToDelete(null); // Reset the student to delete after deletion
+        ); // Remove deleted student from the list
+        setIsDeleteModalOpen(false); // Close delete modal
+        setStudentToDelete(null); // Reset student to delete
       } catch (error) {
         console.error("Error deleting student:", error);
-        setError("Error deleting student. Please try again."); // Set error message if deletion fails
+        setError("Error deleting student. Please try again."); // Error handling for deletion
       }
     }
   };
 
+  // Render loading state
   if (loading) {
-    return <div className="text-center">Loading students...</div>; // Loading state
+    return (
+      <div className="text-center text-xl text-gray-600">
+        Loading students...
+      </div>
+    ); // Loading indicator
   }
 
+  // Render error state
   if (error) {
-    return <div className="text-red-500 text-center">{error}</div>; // Error state
+    return <div className="text-red-500 text-center text-lg">{error}</div>; // Error message
   }
 
   return (
@@ -79,11 +91,11 @@ const StudentList = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead>
             <tr className="bg-indigo-600 text-white text-left">
-              <th className="py-3 px-4 border-b">Name</th>
-              <th className="py-3 px-4 border-b">Age</th>
-              <th className="py-3 px-4 border-b">Course</th>
-              <th className="py-3 px-4 border-b">Contact</th>
-              <th className="py-3 px-4 border-b">Actions</th>
+              <th className="py-3 px-4 border-b text-lg">Name</th>
+              <th className="py-3 px-4 border-b text-lg">Age</th>
+              <th className="py-3 px-4 border-b text-lg">Course</th>
+              <th className="py-3 px-4 border-b text-lg">Contact</th>
+              <th className="py-3 px-4 border-b text-lg">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -92,21 +104,23 @@ const StudentList = () => {
                 key={student._id}
                 className="border-b hover:bg-gray-100 transition duration-200"
               >
-                <td className="py-2 px-4">{student.name}</td>
-                <td className="py-2 px-4">{student.age}</td>
-                <td className="py-2 px-4">{student.course}</td>
-                <td className="py-2 px-4">{student.contact}</td>
+                <td className="py-2 px-4 text-md">{student.name}</td>
+                <td className="py-2 px-4 text-md">{student.age}</td>
+                <td className="py-2 px-4 text-md">{student.course}</td>
+                <td className="py-2 px-4 text-md">{student.contact}</td>
                 <td className="py-2 px-4 flex space-x-2">
                   <button
-                    onClick={() => handleEdit(student)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-200"
+                    onClick={() => handleEdit(student)} // Edit button handler
+                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition duration-200 flex items-center"
                   >
+                    <FaEdit className="mr-1" /> {/* Edit icon */}
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(student)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200"
+                    onClick={() => handleDelete(student)} // Delete button handler
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-200 flex items-center"
                   >
+                    <FaTrash className="mr-1" /> {/* Delete icon */}
                     Delete
                   </button>
                 </td>
@@ -116,17 +130,15 @@ const StudentList = () => {
         </table>
       </div>
 
-      {/* Display the StudentForm next to the table */}
       <div className="w-2/5 ml-6 flex-shrink-0">
         {selectedStudent && (
           <StudentForm
-            selectedStudent={selectedStudent}
-            onUpdate={handleUpdate}
+            selectedStudent={selectedStudent} // Pass selected student for editing
+            onUpdate={handleUpdate} // Pass update handler
           />
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
           <div className="bg-white rounded-lg p-6 shadow-lg">
@@ -135,13 +147,13 @@ const StudentList = () => {
             <div className="mt-4 flex justify-between">
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded"
-                onClick={confirmDelete}
+                onClick={confirmDelete} // Confirm deletion
               >
                 Yes, Delete
               </button>
               <button
                 className="bg-gray-500 text-white px-4 py-2 rounded"
-                onClick={() => setIsDeleteModalOpen(false)}
+                onClick={() => setIsDeleteModalOpen(false)} // Cancel deletion
               >
                 Cancel
               </button>
