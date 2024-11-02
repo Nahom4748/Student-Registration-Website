@@ -9,7 +9,7 @@ Frontend: React with Tailwind CSS
 
 Backend: Node.js with Express.js
 
-Database: MongoDB (hosted on MongoDB Atlas or a local MongoDB instance)
+Database: MongoDB 
 
 Features
 Student Registration: Register new students with details such as name, age, email, and course.
