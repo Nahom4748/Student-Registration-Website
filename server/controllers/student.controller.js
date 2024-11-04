@@ -1,5 +1,5 @@
 const Student = require("../models/student.model");
-
+//
 exports.createStudent = async (req, res) => {
   try {
     const student = new Student(req.body);
@@ -20,10 +20,13 @@ exports.getStudents = async (req, res) => {
 };
 exports.updateStudent = async (req, res) => {
   try {
-    const { id } = req.params; // Extract the student ID from the URL parameters
+    const { id } = req.params;
+    // Extract the student ID from the URL parameters
     const updatedStudent = await Student.findByIdAndUpdate(id, req.body, {
-      new: true, // Return the updated document
-      runValidators: true, // Run schema validators
+      new: true,
+      // Return the updated document
+      runValidators: true,
+      // Run schema validators
     });
 
     if (!updatedStudent) {
@@ -37,7 +40,8 @@ exports.updateStudent = async (req, res) => {
 };
 exports.deleteStudent = async (req, res) => {
   try {
-    const { id } = req.params; // Extract the student ID from the URL parameters
+    const { id } = req.params;
+    // Extract the student ID from the URL parameters
     const deletedStudent = await Student.findByIdAndDelete(id);
 
     if (!deletedStudent) {

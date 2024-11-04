@@ -7,10 +7,9 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 
-import StudentService from "../../../Service/Student.service"; 
-// StudentForm component for editing student information
+import StudentService from "../../../Service/Student.service";
+
 const StudentForm = ({ selectedStudent, onUpdate }) => {
-  // State to store form data for a student, initialized with empty fields
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -18,7 +17,6 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
     contact: "",
   });
 
-  // Effect hook to populate form data when a selected student is passed in
   useEffect(() => {
     if (selectedStudent) {
       setFormData({
@@ -29,30 +27,22 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
       });
     }
   }, [selectedStudent]);
-   // Dependencies: triggers when `selectedStudent` changes
-
-  // Event handler to capture input changes and update the `formData` state
+  //This code updates the formData state by merging the new value of a form field into the existing state. The field to update is determined by the name attribute of the input element that triggered the event (e.target.name).
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value, 
-      // Dynamically update the relevant field
+      [name]: value,
     }));
   };
-
-  // Function to handle form submission for updating student information
+  //This code snippet defines an asynchronous function named handleSubmit. It is used to handle form submissions. When the function is called, it prevents the default form submission behavior. It then tries to update a student's information using the StudentService.updateStudent method. If the update is successful, it calls the onUpdate function with the updated form data. If there is an error during the update, it logs the error to the console.
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
-    // Prevent default form submission behavior
+    e.preventDefault();
     try {
-      // Sends updated student data to the backend using StudentService
       await StudentService.updateStudent(selectedStudent._id, formData);
-      onUpdate(formData); 
-      // Calls onUpdate function to notify the parent component of the change
+      onUpdate(formData);
     } catch (error) {
-      console.error("Error updating student:", error); 
-      // Log any errors encountered during submission
+      console.error("Error updating student:", error);
     }
   };
 
@@ -69,14 +59,17 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Name" 
+            placeholder="Name"
             className="border-none p-2 w-full focus:outline-none"
-            required 
+            required
           />
         </div>
 
         <div className="mb-4 flex items-center border-b border-gray-300">
-          <FontAwesomeIcon icon={faCalendarAlt} className="mr-2 text-gray-600" />
+          <FontAwesomeIcon
+            icon={faCalendarAlt}
+            className="mr-2 text-gray-600"
+          />
           <input
             type="number"
             name="age"
@@ -116,9 +109,9 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
 
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition duration-200"
+          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition duration-200"
         >
-          Update
+          Update Student
         </button>
       </form>
     </div>

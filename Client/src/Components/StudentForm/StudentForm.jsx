@@ -5,9 +5,10 @@ import {
   FaGraduationCap,
   FaPhone,
   FaCalendarAlt,
-} from "react-icons/fa"; // Correct icon import
-import StudentService from "../../Service/Student.service"; // Import student service for API calls
+} from "react-icons/fa";
+// Import student service for API calls
 
+import StudentService from "../../Service/Student.service";
 const StudentForm = ({ selectedStudent, onUpdate }) => {
   // State to hold form data
   const [formData, setFormData] = useState({
@@ -16,8 +17,10 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
     course: "",
     contact: "",
   });
-  const [successMessage, setSuccessMessage] = useState(""); // State for success messages
-  const [errorMessage, setErrorMessage] = useState(""); // State for error messages
+  // State for success messages
+  const [successMessage, setSuccessMessage] = useState("");
+  // State for error messages
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Effect to set form data when editing a student
   useEffect(() => {
@@ -26,17 +29,23 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
     } else {
       setFormData({ name: "", age: "", course: "", contact: "" }); // Reset form
     }
-  }, [selectedStudent]); // Run when selectedStudent changes
+  }, [selectedStudent]);
+  // Run when selectedStudent changes
 
   // Handle input changes in the form
   const handleChange = (e) => {
+    // If contact field, allow only digits
+    if (e.target.name === "contact" && !/^\d*$/.test(e.target.value)) {
+      return; // Only allow digits
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value }); // Update form data state
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
+      // Prevent default form submission
       if (selectedStudent) {
         // If editing a student, call the update API
         await StudentService.updateStudent(selectedStudent._id, formData);
@@ -63,7 +72,6 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
         <h2 className="text-2xl font-bold text-center mb-4">
           {selectedStudent ? "Edit Student" : "Register Student"}
         </h2>
-        {/* Name Input */}
         <div className="flex items-center mb-4">
           <FaUser className="text-gray-400 mr-2" />
           <input
@@ -76,7 +84,6 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
             required
           />
         </div>
-        {/* Age Input */}
         <div className="flex items-center mb-4">
           <FaCalendarAlt className="text-gray-400 mr-2" />
           <input
@@ -89,7 +96,6 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
             required
           />
         </div>
-        {/* Course Select Dropdown */}
         <div className="flex items-center mb-4">
           <FaGraduationCap className="text-gray-400 mr-2" />
           <select
@@ -116,16 +122,19 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
             <option value="Python">Python</option>
           </select>
         </div>
-        {/* Contact Input */}
         <div className="flex items-center mb-4">
           <FaPhone className="text-gray-400 mr-2" />
           <input
-            type="text"
+            type="tel"
             name="contact"
-            placeholder="Contact"
+            placeholder="0910000000"
             value={formData.contact}
             onChange={handleChange}
+            pattern="\d{10}"
+            // Pattern to match exactly 10 digits
             className="border border-gray-300 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            maxLength="10"
+            // Limit input length to 10 characters
             required
           />
         </div>
@@ -138,11 +147,7 @@ const StudentForm = ({ selectedStudent, onUpdate }) => {
         {successMessage && (
           <p className="text-green-500 mt-2">{successMessage}</p>
         )}{" "}
-        {/* Success message display */}
-        {errorMessage && (
-          <p className="text-red-500 mt-2">{errorMessage}</p>
-        )}{" "}
-        {/* Error message display */}
+        {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}{" "}
       </form>
     </div>
   );
